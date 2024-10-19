@@ -1,0 +1,16 @@
+2024-10-17 07:26:21.081900+03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "RULES" не найдена
+Table "RULES" not found; SQL statement:
+SELECT "RULES"."ID" AS "ID", "RULES"."NEGATE" AS "NEGATE", "RULES"."QUERY_NAME" AS "QUERY_NAME", "RULES"."ARGUMENTS" AS "ARGUMENTS", "query"."ID" AS "QUERY_ID", "query"."QUERY" AS "QUERY_QUERY" FROM "RULES" LEFT OUTER JOIN "QUERIES" "query" ON "query"."QUERY_ID" = "RULES"."ID" WHERE "RULES"."QUERY_NAME" = ? [42102-224]
+2024-10-17 07:44:18.566389+03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "RULES" не найдена
+Table "RULES" not found; SQL statement:
+SELECT "RULES"."ID" AS "ID", "RULES"."NEGATE" AS "NEGATE", "RULES"."QUERY_NAME" AS "QUERY_NAME", "RULES"."ARGUMENTS" AS "ARGUMENTS", "query"."ID" AS "QUERY_ID", "query"."QUERY" AS "QUERY_QUERY" FROM "RULES" LEFT OUTER JOIN "QUERIES" "query" ON "query"."QUERY_ID" = "RULES"."ID" WHERE "RULES"."QUERY_NAME" = ? [42102-224]
+2024-10-17 07:48:51.067249+03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "RULES" не найдена
+Table "RULES" not found; SQL statement:
+SELECT "RULES"."ID" AS "ID", "RULES"."NEGATE" AS "NEGATE", "RULES"."QUERY_NAME" AS "QUERY_NAME", "RULES"."ARGUMENTS" AS "ARGUMENTS", "query"."ID" AS "QUERY_ID", "query"."QUERY" AS "QUERY_QUERY" FROM "RULES" LEFT OUTER JOIN "QUERIES" "query" ON "query"."QUERY_ID" = "RULES"."ID" WHERE "RULES"."QUERY_NAME" = ? [42102-224]
+2024-10-17 08:01:13.900077+03:00 jdbc[3]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Таблица "RULES" не найдена
+Table "RULES" not found; SQL statement:
+SELECT "RULES"."ID" AS "ID", "RULES"."NEGATE" AS "NEGATE", "RULES"."QUERY_NAME" AS "QUERY_NAME", "RULES"."ARGUMENTS" AS "ARGUMENTS", "query"."ID" AS "QUERY_ID", "query"."QUERY" AS "QUERY_QUERY" FROM "RULES" LEFT OUTER JOIN "QUERIES" "query" ON "query"."QUERY_ID" = "RULES"."ID" WHERE "RULES"."QUERY_NAME" = ? [42102-224]
