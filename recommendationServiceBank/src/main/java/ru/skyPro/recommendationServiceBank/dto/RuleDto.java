@@ -1,10 +1,6 @@
 package ru.skyPro.recommendationServiceBank.dto;
 
 import lombok.Data;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-import ru.skyPro.recommendationServiceBank.model.rulesEntity.Rule;
-import ru.skyPro.recommendationServiceBank.repository.RuleRepository;
 
 
 @Data

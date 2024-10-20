@@ -19,10 +19,16 @@ public class Recommendation {
     private String productName;
     private String description;
 
-    @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    // В этой стороне определяем, что рекомендация может иметь много правил
+    @ManyToMany(cascade = CascadeType.ALL)
+    @JoinTable(
+            name = "recommendation_rule", // Имя таблицы-соединения
+            joinColumns = @JoinColumn(name = "recommendation_id"), // Имя столбца для Recommendation
+            inverseJoinColumns = @JoinColumn(name = "rule_id") // Имя столбца для Rule
+    )
     private List<Rule> rules;
 
-    public Recommendation(long id, String productName, String description ) {
+    public Recommendation(long id, String productName, String description) {
         this.id = id;
         this.productName = productName;
         this.description = description;
@@ -52,18 +58,17 @@ public class Recommendation {
         return description;
     }
 
-//    public void setRule(List<Rule> rule) {
-//        this.rule = rule;
-//    }
-//
-//    public List<Rule> getRule() {
-//        return rule;
-//    }
+    public void setRules(List<Rule> rules) {
+        this.rules = rules;
+    }
+
+    public List<Rule> getRules() {
+        return rules;
+    }
 
     @Override
     public String toString() {
         return "Клиенту рекомендуется: " + productName + " -  " + description;
     }
-
 }
 

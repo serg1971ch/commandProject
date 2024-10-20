@@ -1,11 +1,7 @@
 package ru.skyPro.recommendationServiceBank.service;
 
+import ru.skyPro.recommendationServiceBank.model.rulesEntity.Rule;
+
 public interface CombinerQueryService {
-    String setQueryUserOfProduct();
 
-    String setQueryActiveUserOfProduct();
-
-    String setQueryTransactionSummaryCompare();
-
-    String setQueryTransactionSumCompareDepositWithdraw();
 }

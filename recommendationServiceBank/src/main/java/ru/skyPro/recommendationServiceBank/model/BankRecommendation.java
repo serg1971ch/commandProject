@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+@Getter
 @NoArgsConstructor
 public class BankRecommendation implements DynamicRulesManager{
 
@@ -43,24 +44,12 @@ public class BankRecommendation implements DynamicRulesManager{
         this.id = id;
     }
 
-    public UUID getId() {
-        return id;
-    }
-
     public void setProductName(String productName) {
         this.productName = productName;
     }
 
-    public String getProductName() {
-        return productName;
-    }
-
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public String getDescription() {
-        return description;
     }
 
     public void setRules(List<Rule> rules) {
@@ -69,6 +58,18 @@ public class BankRecommendation implements DynamicRulesManager{
 
     public List<Rule> getRules() {
         return rules;
+    }
+
+    public String getProductName() {
+        return productName;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public UUID getId() {
+        return id;
     }
 
     @Override

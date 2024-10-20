@@ -44,7 +44,7 @@ public class RecommendationsService {
             client = new ClientRecommendation(user, bankServiceRecommendations);
             return client;
         } else {
-            throw new RecommendBankException();
+            throw new RecommendBankException("recommendation not found");
         }
     }
 }

@@ -26,15 +26,17 @@ repositories {
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa")
 	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0")
-// https://mvnrepository.com/artifact/org.liquibase/liquibase-core
-	implementation("org.liquibase:liquibase-core:4.27.0")
+	// https://mvnrepository.com/artifact/org.springframework/spring-webmvc
+	implementation("org.springframework:spring-webmvc:6.1.12")
+	// https://mvnrepository.com/artifact/io.swagger.core.v3/swagger-annotations
+	implementation("io.swagger.core.v3:swagger-annotations:2.2.25")
 
+	implementation("org.liquibase:liquibase-core:4.27.0")
 	compileOnly("org.projectlombok:lombok")
 	runtimeOnly("com.h2database:h2")
-//	runtimeOnly("org.postgresql:postgresql")
-	// https://mvnrepository.com/artifact/org.postgresql/postgresql
 	implementation("org.postgresql:postgresql:42.7.3")
+	// https://mvnrepository.com/artifact/org.webjars/swagger-ui
+	implementation("org.webjars:swagger-ui:5.17.14")
 
 	annotationProcessor("org.projectlombok:lombok")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
@@ -42,7 +44,6 @@ dependencies {
 	testImplementation("org.mockito:mockito-core")
 	testImplementation("org.mockito:mockito-junit-jupiter")
 	testImplementation("org.assertj:assertj-core:3.26.0")
-	// https://mvnrepository.com/artifact/log4j/log4j
 	implementation("log4j:log4j:1.2.17")
 }
 

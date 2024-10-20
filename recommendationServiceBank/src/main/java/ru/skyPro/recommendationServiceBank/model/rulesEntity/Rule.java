@@ -3,15 +3,9 @@ package ru.skyPro.recommendationServiceBank.model.rulesEntity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.PersistenceCreator;
 
-import java.util.List;
-import java.util.Set;
-
+@AllArgsConstructor
 @NoArgsConstructor
 @Entity
 @Table(name = "rules")
@@ -40,9 +34,8 @@ public class Rule {
         this.query = query;
     }
 
-    public Rule(Long id, String name) {
-        this.id = id;
-        this.queryName = name;
+    public Rule(Recommendation recommendation) {
+        this.recommendation = recommendation;
     }
 
     public Rule(Long id, String queryName, String query) {
