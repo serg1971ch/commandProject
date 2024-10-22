@@ -1,55 +1,35 @@
 package ru.skyPro.recommendationServiceBank.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import ru.skyPro.recommendationServiceBank.model.BankRecommendation;
-import ru.skyPro.recommendationServiceBank.model.ClientRecommendation;
-import ru.skyPro.recommendationServiceBank.model.rulesEntity.Recommendation;
-import ru.skyPro.recommendationServiceBank.model.rulesEntity.Rule;
-import ru.skyPro.recommendationServiceBank.service.CombinerQueryServiceImpl;
-import ru.skyPro.recommendationServiceBank.service.RecommendationsService;
-
-import java.util.List;
-import java.util.UUID;
+import ru.skyPro.recommendationServiceBank.model.BankRecommendationRule;
+import ru.skyPro.recommendationServiceBank.service.RecommendationService;
 
 @RestController
 @RequestMapping("/recommendation")
 public class RecommendationController {
 
-    private final RecommendationsService service;
-    private final CombinerQueryServiceImpl combinerQueryService;
+    private final RecommendationService service;
 
-    public RecommendationController(RecommendationsService service, CombinerQueryServiceImpl combinerQueryService) {
+    public RecommendationController(RecommendationService service) {
         this.service = service;
-        this.combinerQueryService = combinerQueryService;
+
+    }
+
+    @Operation(summary = "Add recommendation")
+    @PostMapping("/rule")
+    public ResponseEntity<BankRecommendationRule> addRecommendation() {
+        return ResponseEntity.ok(recommendationService.addRecommendation(recommendation));
     }
 
 //    @GetMapping("/{id}")
 //    public ClientRecommendation getRecommendations(@PathVariable("id") String id) {
-//        return service.getClientRecommendation(UUID.fromString(id));
+//        return service.getClientRecommendationByJDBCtemplate(UUID.fromString(id));
 //    }
-
-//    @PostMapping("/rule")
-//    public List<Rule> createRecommendation(@RequestParam String firstNameRule,
-//                                           @RequestParam String secondNameRule,
-//                                           @RequestParam String thirdNameRule) {
-//        return combinerQueryService.createDynamicRule(firstNameRule, secondNameRule, thirdNameRule);
+//
+//    @PostMapping
+//    public BankRecommendation getCreditRecommendationsForUser()  {
+//        return service.getCreditRecommendations();
 //    }
-
-//    @PutMapping("/example/{id}")
-//    public Recommendation updateRecommendation(@PathVariable Long id,
-//                                               @RequestParam String firstNameRule,
-//                                               @RequestParam String secondNameRule,
-//                                               @RequestParam String thirdNameRule) {
-//        return combinerQueryService.updateRecommendation(id, firstNameRule, secondNameRule, thirdNameRule);
-//    }
-
-//    @PostMapping("/{id}")
-//    public BankRecommendation getProperlyRecommendations(@PathVariable Long id)  {
-//        return combinerQueryService.getRecommendation(id);
-//    }
-
-    @PostMapping
-    public BankRecommendation getProperlyRecommendations()  {
-        return combinerQueryService.getRecommendation(1L);
-    }
 }

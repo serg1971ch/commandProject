@@ -1,38 +1,33 @@
 package ru.skyPro.recommendationServiceBank.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
+import ru.skyPro.recommendationServiceBank.dto.RuleDto;
 import ru.skyPro.recommendationServiceBank.model.rulesEntity.Rule;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
 @Getter
 @NoArgsConstructor
-public class BankRecommendation implements DynamicRulesManager{
+public class BankRecommendationRule implements DynamicRulesManager{
 
     private UUID id;
     private String productName;
     private String description;
-    private List<Rule> rules;
+    private List<RuleDto> rules;
 
-    public BankRecommendation(UUID id, String productName, String description) {
+    public BankRecommendationRule(UUID id, String productName, String description) {
         this.id = id;
         this.productName = productName;
         this.description = description;
     }
 
-    public BankRecommendation(UUID id, String productName, String description, List<Rule> rulesList) {
+    public BankRecommendationRule(UUID id, String productName, String description, List<RuleDto> rules) {
         this.id = id;
         this.productName = productName;
         this.description = description;
-        this.rules = rulesList;
+        this.rules = rules;
     }
 
     @Override
@@ -52,14 +47,6 @@ public class BankRecommendation implements DynamicRulesManager{
         this.description = description;
     }
 
-    public void setRules(List<Rule> rules) {
-        this.rules = rules;
-    }
-
-    public List<Rule> getRules() {
-        return rules;
-    }
-
     public String getProductName() {
         return productName;
     }
@@ -70,6 +57,14 @@ public class BankRecommendation implements DynamicRulesManager{
 
     public UUID getId() {
         return id;
+    }
+
+    public void setRules(List<RuleDto> rules) {
+        this.rules = rules;
+    }
+
+    public List<RuleDto> getRules() {
+        return rules;
     }
 
     @Override

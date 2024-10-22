@@ -8,9 +8,9 @@ import java.util.UUID;
 @Data
 public class ClientRecommendation {
     private UUID id;
-    private List<BankRecommendation> bankRecommendations;
+    private List<BankRecommendationRule> bankRecommendations;
 
-    public ClientRecommendation(UUID id, List<BankRecommendation> recommendations) {
+    public ClientRecommendation(UUID id, List<BankRecommendationRule> recommendations) {
         this.id = id;
         this.bankRecommendations = recommendations;
     }
