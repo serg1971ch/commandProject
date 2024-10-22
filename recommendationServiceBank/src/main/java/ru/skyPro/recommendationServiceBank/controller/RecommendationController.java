@@ -6,6 +6,8 @@ import org.springframework.web.bind.annotation.*;
 import ru.skyPro.recommendationServiceBank.model.BankRecommendationRule;
 import ru.skyPro.recommendationServiceBank.service.RecommendationService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/recommendation")
 public class RecommendationController {
@@ -20,16 +22,19 @@ public class RecommendationController {
     @Operation(summary = "Add recommendation")
     @PostMapping("/rule")
     public ResponseEntity<BankRecommendationRule> addRecommendation() {
-        return ResponseEntity.ok(recommendationService.addRecommendation(recommendation));
+        return ResponseEntity.ok(service.createDynamicRule());
     }
 
-//    @GetMapping("/{id}")
-//    public ClientRecommendation getRecommendations(@PathVariable("id") String id) {
-//        return service.getClientRecommendationByJDBCtemplate(UUID.fromString(id));
-//    }
-//
-//    @PostMapping
-//    public BankRecommendation getCreditRecommendationsForUser()  {
-//        return service.getCreditRecommendations();
-//    }
+    @Operation(summary = "Find all recommendations")
+    @GetMapping("/rule")
+    public List<BankRecommendationRule> getAllRecommendations() {
+        return service.getAllRules();
+    }
+
+    @Operation
+    @PostMapping("/rule/<rule_id>")
+    public void removeRecommendation(@RequestParam int rule_id) {
+        service.setRecommendationRules();
+        service.removeRule(rule_id);
+    }
 }

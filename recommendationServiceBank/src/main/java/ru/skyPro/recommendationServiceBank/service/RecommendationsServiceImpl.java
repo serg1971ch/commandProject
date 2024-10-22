@@ -1,5 +1,6 @@
 package ru.skyPro.recommendationServiceBank.service;
 
+import lombok.Getter;
 import org.springframework.stereotype.Service;
 import ru.skyPro.recommendationServiceBank.configuration.AppProperties;
 import ru.skyPro.recommendationServiceBank.exceptions.RecommendBankException;
@@ -21,22 +22,17 @@ public class RecommendationsServiceImpl implements RecommendationService {
     private final CombinerQueryService combinerService;
     private final AppProperties appProperties;
     private final RecommendationsRepository recommendationsRepository;
-    private List<BankRecommendationRule> recommendationRules = new ArrayList<>();
+    @Getter
+    private List<BankRecommendationRule> recommendationsList;
 
-    public RecommendationsServiceImpl(RecommendationRepository repository, CombinerQueryService combinerService, AppProperties appProperties, RecommendationsRepository recommendationsRepository) {
+    public RecommendationsServiceImpl(RecommendationRepository repository, CombinerQueryService combinerService, AppProperties appProperties,
+                                      RecommendationsRepository recommendationsRepository, List<BankRecommendationRule> recommendationsList) {
         this.repository = repository;
         this.combinerService = combinerService;
         this.appProperties = appProperties;
         this.recommendationsRepository = recommendationsRepository;
+        this.recommendationsList = recommendationsList;
     }
-
-//    public BankRecommendation getCreditRecommendations()  {
-//        return combinerService.getRecommendation(3L);
-//    }
-//
-//    public BankRecommendation getInvestRecommendations()  {
-//        return combinerService.getRecommendation(1L);
-//    }
 
     @Override
     public ClientRecommendation getClientRecommendationByJDBCTemplate(UUID user) {
@@ -62,19 +58,33 @@ public class RecommendationsServiceImpl implements RecommendationService {
     }
 
     @Override
-    public BankRecommendationRule createRule() {
-        if (Objects.equals(repository.findByProductName(appProperties.getNameOne()).getProductName(), appProperties.getNameOne())) {
-            return combinerService.getRecommendation(1L);
-        }
-        if(Objects.equals(repository.findByProductName(appProperties.getNameTwo()).getProductName(), appProperties.getNameTwo())) {
-            return combinerService.getRecommendation(2L);
-        }
-        if(Objects.equals(repository.findByProductName(appProperties.getNameThree()).getProductName(), appProperties.getDescriptionThree())) {
-            return combinerService.getRecommendation(3L);
-        }
-        else {
-            throw new RecommendBankException("recommendation not found");
-        }
+    public void setRecommendationRules() {
+        BankRecommendationRule ruleOne;
+        BankRecommendationRule ruleTwo;
+        BankRecommendationRule ruleThree;
+        recommendationsList = new ArrayList<>();
+        ruleOne = combinerService.getRecommendation(1L);
+        ruleTwo = combinerService.getRecommendation(2L);
+        ruleThree = combinerService.getRecommendation(3L);
+        recommendationsList.add(ruleOne);
+        recommendationsList.add(ruleTwo);
+        recommendationsList.add(ruleThree);
+    }
+
+    @Override
+    public BankRecommendationRule createDynamicRule() {
+        return recommendationsList.get(2);
+    }
+
+    @Override
+    public List<BankRecommendationRule> getAllRules() {
+        setRecommendationRules();
+        return recommendationsList;
+    }
+
+    @Override
+    public void removeRule(int id) {
+        recommendationsList.remove(id);
     }
 }
 
