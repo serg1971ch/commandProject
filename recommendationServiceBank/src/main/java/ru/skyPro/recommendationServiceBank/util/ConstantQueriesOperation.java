@@ -5,6 +5,7 @@ public class ConstantQueriesOperation {
     public static final String INVEST = "INVEST";
     private static final String SAVING = "SAVING";
     public static String DEBIT = "DEBIT";
+    public static String CREDIT = "CREDIT";
     public static final String USER = "USER_OF";
     public static final String ACTIVE = "ACTIVE_USER_OF";
     public static final String TRANSACTION_SUM = "TRANSACTION_SUM_COMPARE";

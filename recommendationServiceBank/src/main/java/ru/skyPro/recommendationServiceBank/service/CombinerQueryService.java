@@ -35,7 +35,9 @@ public class CombinerQueryService {
     public Rule setQueryUserOfProduct() {
         Rule rule = ruleRepository.findByQueryName(USER);
         DEBIT = new String(rule.getArguments(), StandardCharsets.UTF_8);
-        rule.setQuery("p.type  " + (rule.isNegate() ? "!=" : "=") + DEBIT.replaceAll("[{}\"]", "").trim());
+        rule.setQuery("SUM(CASE WHEN p.type  " + (rule.isNegate() ? "!=" : "=") +
+                DEBIT.replaceAll("[{}\"]", "").trim()  +
+                  " THEN 1 ELSE 0 END) > 0 ");
         return ruleRepository.save(rule);
     }
 
@@ -60,7 +62,8 @@ public class CombinerQueryService {
         Rule rule = ruleRepository.findByQueryName(USER_FOR_INVEST);
         String compareTransactionArgs = new String(rule.getArguments(), StandardCharsets.UTF_8);
         String[] transactionArgs = compareTransactionArgs.split(",");
-        rule.setQuery("p.type  " + (rule.isNegate() ? "!=" : "=") + transactionArgs[0].replaceAll("[{}\"]", "").trim());
+        String invest = transactionArgs[0].replaceAll("[{}\"]", "").trim();
+        rule.setQuery("SUM(CASE WHEN p.type " + (rule.isNegate() ? "!=" : "=" ) + invest + " THEN 1 ELSE 0 END) > 0 ");
         return ruleRepository.save(rule);
     }
 
@@ -141,6 +144,10 @@ public class CombinerQueryService {
             splitArgs[i] = splitArgs[i].replaceAll("[{}\"]", "").trim();
         }
         return new RuleDto(rule.getQueryName(), splitArgs, rule.isNegate());
+    }
+
+    private void convertToStringArgs(String args) {
+        args.replaceAll("[{}\"]", "").trim();
     }
 }
 
