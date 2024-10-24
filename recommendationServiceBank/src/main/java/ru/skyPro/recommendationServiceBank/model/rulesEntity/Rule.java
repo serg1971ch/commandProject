@@ -24,10 +24,18 @@ public class Rule {
     private String query;
 
     @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "recommend_is")
     private Recommendation recommendation;
 
     public Rule(Long id, String name, byte[] arguments, boolean negate, String query) {
         this.id = id;
+        this.queryName = name;
+        this.arguments = arguments;
+        this.negate = negate;
+        this.query = query;
+    }
+
+    public Rule(String name, byte[] arguments, boolean negate) {
         this.queryName = name;
         this.arguments = arguments;
         this.negate = negate;

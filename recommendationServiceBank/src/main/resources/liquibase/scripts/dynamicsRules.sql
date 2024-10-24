@@ -1,24 +1,21 @@
 -- liquibase formated sql
 
 -- changeset author:1
-DROP TABLE IF EXISTS rules CASCADE;
-DROP TABLE IF EXISTS recommendations CASCADE;
--- changeset author:2
-CREATE TABLE rules
-(
-    id         SERIAL  NOT NULL PRIMARY KEY,
-    name varchar NOT NULL,
-    arguments  TEXT [],
-    negate     boolean,
-    query varchar
-);
+-- CREATE TABLE rules
+-- (
+--     id         SERIAL  NOT NULL PRIMARY KEY,
+--     name varchar NOT NULL,
+--     arguments  TEXT [],
+--     negate     boolean,
+--     query varchar
+-- );
 
-CREATE  TABLE  recommendations
-(
-    id           SERIAL  NOT NULL PRIMARY KEY,
-    product_name varchar(256) NOT NULL,
-    description  text    NOT NULL
-);
+-- CREATE  TABLE  recommendations
+-- (
+--     id           SERIAL  NOT NULL PRIMARY KEY,
+--     product_name varchar(256) NOT NULL,
+--     description  text    NOT NULL
+-- );
 
 -- changeset author:3
 insert into recommendations (product_name, description)
