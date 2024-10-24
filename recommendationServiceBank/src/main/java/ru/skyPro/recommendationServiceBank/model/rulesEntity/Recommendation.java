@@ -20,16 +20,17 @@ public class Recommendation {
     private String description;
 
     // В этой стороне определяем, что рекомендация может иметь много правил
-    @ManyToMany(cascade = CascadeType.ALL)
-    @JoinTable(
-            name = "recommendation_rule", // Имя таблицы-соединения
-            joinColumns = @JoinColumn(name = "recommendation_id"), // Имя столбца для Recommendation
-            inverseJoinColumns = @JoinColumn(name = "rule_id") // Имя столбца для Rule
-    )
+//    @ManyToMany(cascade = CascadeType.ALL)
+//    @JoinTable(
+//            name = "recommendation_rule", // Имя таблицы-соединения
+//            joinColumns = @JoinColumn(name = "recommendation_id"), // Имя столбца для Recommendation
+//            inverseJoinColumns = @JoinColumn(name = "rule_id") // Имя столбца для Rule
+//    )
+    @OneToMany
     private List<Rule> rules;
 
-    public Recommendation(long id, String productName, String description) {
-        this.id = id;
+    public Recommendation(String productName, String description) {
+//        this.id = id;
         this.productName = productName;
         this.description = description;
     }

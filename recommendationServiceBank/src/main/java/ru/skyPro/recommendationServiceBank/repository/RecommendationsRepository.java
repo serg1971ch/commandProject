@@ -15,7 +15,7 @@ public class RecommendationsRepository {
         this.jdbcTemplate = jdbcTemplate;
     }
 
-    public List<String> getRecommenationForUser(UUID user) {
+    public List<String> getRecommenationForUserFirstMethod(UUID user) {
         String sql = "SELECT " +
                 "CASE " +
                 "WHEN " +

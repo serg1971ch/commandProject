@@ -1,13 +1,18 @@
 package ru.skyPro.recommendationServiceBank.service;
 
+import lombok.Getter;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import ru.skyPro.recommendationServiceBank.configuration.AppProperties;
+import ru.skyPro.recommendationServiceBank.dto.RuleDto;
 import ru.skyPro.recommendationServiceBank.exceptions.RecommendBankException;
 import ru.skyPro.recommendationServiceBank.model.BankRecommendationRule;
 import ru.skyPro.recommendationServiceBank.model.ClientRecommendation;
+import ru.skyPro.recommendationServiceBank.model.rulesEntity.Recommendation;
 import ru.skyPro.recommendationServiceBank.model.rulesEntity.Rule;
 import ru.skyPro.recommendationServiceBank.repository.RecommendationRepository;
 import ru.skyPro.recommendationServiceBank.repository.RecommendationsRepository;
+import ru.skyPro.recommendationServiceBank.repository.RuleRepository;
 
 
 import java.util.ArrayList;
@@ -17,31 +22,30 @@ import java.util.UUID;
 
 @Service
 public class RecommendationsServiceImpl implements RecommendationService {
-    private final RecommendationRepository repository;
+    private final RuleRepository ruleRepository;
     private final CombinerQueryService combinerService;
     private final AppProperties appProperties;
     private final RecommendationsRepository recommendationsRepository;
-    private List<BankRecommendationRule> recommendationRules = new ArrayList<>();
+    private final RecommendationRepository recommendationRepository;
+    private final JdbcTemplate jdbcTemplate;
+    @Getter
+    private List<BankRecommendationRule> recommendationsList;
 
-    public RecommendationsServiceImpl(RecommendationRepository repository, CombinerQueryService combinerService, AppProperties appProperties, RecommendationsRepository recommendationsRepository) {
-        this.repository = repository;
+    public RecommendationsServiceImpl(RuleRepository ruleRepository, CombinerQueryService combinerService, AppProperties appProperties,
+                                      RecommendationsRepository recommendationsRepository, RecommendationRepository recommendationRepository, JdbcTemplate jdbcTemplate, List<BankRecommendationRule> recommendationsList) {
+        this.ruleRepository = ruleRepository;
         this.combinerService = combinerService;
         this.appProperties = appProperties;
         this.recommendationsRepository = recommendationsRepository;
+        this.recommendationRepository = recommendationRepository;
+        this.jdbcTemplate = jdbcTemplate;
+        this.recommendationsList = recommendationsList;
     }
-
-//    public BankRecommendation getCreditRecommendations()  {
-//        return combinerService.getRecommendation(3L);
-//    }
-//
-//    public BankRecommendation getInvestRecommendations()  {
-//        return combinerService.getRecommendation(1L);
-//    }
 
     @Override
     public ClientRecommendation getClientRecommendationByJDBCTemplate(UUID user) {
         ClientRecommendation client;
-        List<String> listProducts = recommendationsRepository.getRecommenationForUser(user);
+        List<String> listProducts = recommendationsRepository.getRecommenationForUserFirstMethod(user);
         List<BankRecommendationRule> bankServiceRecommendations = new ArrayList<>();
 
         if (listProducts.contains(appProperties.getNameOne())) {
@@ -62,19 +66,69 @@ public class RecommendationsServiceImpl implements RecommendationService {
     }
 
     @Override
-    public BankRecommendationRule createRule() {
-        if (Objects.equals(repository.findByProductName(appProperties.getNameOne()).getProductName(), appProperties.getNameOne())) {
-            return combinerService.getRecommendation(1L);
-        }
-        if(Objects.equals(repository.findByProductName(appProperties.getNameTwo()).getProductName(), appProperties.getNameTwo())) {
-            return combinerService.getRecommendation(2L);
-        }
-        if(Objects.equals(repository.findByProductName(appProperties.getNameThree()).getProductName(), appProperties.getDescriptionThree())) {
-            return combinerService.getRecommendation(3L);
-        }
-        else {
-            throw new RecommendBankException("recommendation not found");
-        }
+    public void setRecommendationRules() {
+        BankRecommendationRule ruleRecommendationOne, ruleRecommendationTwo, ruleRecommendationThree;
+        Recommendation recommendationOne = recommendationRepository.findById(1L).orElseThrow(() -> new RecommendBankException("recommendation not found"));
+        Recommendation recommendationTwo = recommendationRepository.findById(2L).orElseThrow(() -> new RecommendBankException("recommendation not found"));
+        Recommendation recommendationThree = recommendationRepository.findById(3L).orElseThrow(() -> new RecommendBankException("recommendation not found"));
+        ruleRecommendationOne = combinerService.getRecommendation(recommendationOne);
+        ruleRecommendationTwo = combinerService.getRecommendation(recommendationTwo);
+        ruleRecommendationThree = combinerService.getRecommendation(recommendationThree);
+        recommendationsList = List.of(new BankRecommendationRule[]{
+                ruleRecommendationOne,
+                ruleRecommendationTwo,
+                ruleRecommendationThree
+        });
+    }
+
+    @Override
+    public BankRecommendationRule createDynamicRule(Rule newRule, Recommendation recommendation) {
+        newRule = new Rule();
+        ruleRepository.save(newRule);
+        recommendation = recommendationRepository.findById(recommendation.getId()).orElseThrow(() -> new RecommendBankException("recommendation not found"));
+        BankRecommendationRule recommendationRule = combinerService.getRecommendation(recommendation);
+        List<RuleDto> rulesOfRecommendation = recommendationRule.getRules();
+        rulesOfRecommendation.add(combinerService.getStringArgumentsOfRule(newRule));
+        return recommendationRule;
+    }
+
+    @Override
+    public List<BankRecommendationRule> getAllRules() {
+        setRecommendationRules();
+        return recommendationsList;
+    }
+
+    @Override
+    public void removeRule(int id) {
+        recommendationsList.remove(id);
+    }
+
+    @Override
+    public BankRecommendationRule getRuleByUserId(UUID id) {
+        String startQuery = "SELECT CASE ";
+        String finishQuery = "END AS result FROM PRODUCTS p JOIN TRANSACTIONS t ON t.product_id = p.id " +
+                "WHERE t.user_id = ?";
+        String queryOne = startQuery + recommendationsList.get(0).getRules().get(0).getQuery();
+        String queryTwo = startQuery + recommendationsList.get(0).getRules().get(1).getQuery();
+        String queryThree = startQuery + recommendationsList.get(0).getRules().get(2).getQuery();
+        String queryOne1 = startQuery + recommendationsList.get(1).getRules().get(0).getQuery();
+        String queryTwo1 = startQuery + recommendationsList.get(1).getRules().get(1).getQuery();
+        String queryThree1 = startQuery + recommendationsList.get(1).getRules().get(2).getQuery();
+        StringBuilder builder = new StringBuilder();
+        builder.append(startQuery).append(queryOne).append(queryTwo).append(queryThree)
+                .append("THEN 'Invest500' ")
+                .append(queryOne1).append(queryTwo1).append(queryThree1)
+                .append("THEN 'Simple Credit' ELSE '0' END AS result ")
+                .append(finishQuery);
+
+        List<String> sqlRecommendation = jdbcTemplate.queryForList(String.valueOf(builder), String.class, id);
+        String sqlResponse = sqlRecommendation.get(0);
+
+        return switch (sqlResponse) {
+            case "Invest500" -> recommendationsList.get(0);
+            case "Simple Credit" -> recommendationsList.get(1);
+            default -> throw new RecommendBankException("recommendation not found");
+        };
     }
 }
 

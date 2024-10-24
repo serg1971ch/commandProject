@@ -35,7 +35,9 @@ public class CombinerQueryService {
     public Rule setQueryUserOfProduct() {
         Rule rule = ruleRepository.findByQueryName(USER);
         DEBIT = new String(rule.getArguments(), StandardCharsets.UTF_8);
-        rule.setQuery("p.type  " + (rule.isNegate() ? "!=" : "=") + DEBIT.replaceAll("[{}\"]", "").trim());
+        rule.setQuery("SUM(CASE WHEN p.type  " + (rule.isNegate() ? "!=" : "=") +
+                DEBIT.replaceAll("[{}\"]", "").trim()  +
+                  " THEN 1 ELSE 0 END) > 0 ");
         return ruleRepository.save(rule);
     }
 
@@ -60,7 +62,8 @@ public class CombinerQueryService {
         Rule rule = ruleRepository.findByQueryName(USER_FOR_INVEST);
         String compareTransactionArgs = new String(rule.getArguments(), StandardCharsets.UTF_8);
         String[] transactionArgs = compareTransactionArgs.split(",");
-        rule.setQuery("p.type  " + (rule.isNegate() ? "!=" : "=") + transactionArgs[0].replaceAll("[{}\"]", "").trim());
+        String invest = transactionArgs[0].replaceAll("[{}\"]", "").trim();
+        rule.setQuery("SUM(CASE WHEN p.type " + (rule.isNegate() ? "!=" : "=" ) + invest + " THEN 1 ELSE 0 END) > 0 ");
         return ruleRepository.save(rule);
     }
 
@@ -75,29 +78,30 @@ public class CombinerQueryService {
         return ruleRepository.save(rule);
     }
 
-    public List<Rule> createCreditRule() {
-        return getRules(3L);
-    }
+//    public List<Rule> createCreditRule() {
+//        return getRules(3L);
+//    }
+//
+//    public List<Rule> createInvest500Rule() {
+//        return getRules(1L);
+//    }
 
-    public List<Rule> createInvest500Rule() {
-        return getRules(1L);
-    }
-
-    private List<Rule> getRules(Long id) {
+    private List<Rule> getRules(Recommendation recommendation) {
         List<Rule> dynamicRuleList = new ArrayList<>();
         Rule firstRule = setQueryUserOfProduct();
         Rule secondRule = setQueryActiveUserOfProduct();
         Rule thirdRule = setQueryTransactionSummaryCompare();
         Rule thourthRule = setQueryForUserInvest();
-        Recommendation recommendation = recommendationRepository.findById(id)
+        recommendation = recommendationRepository.findById(recommendation.getId())
                 .orElseThrow(() -> new RecommendBankException("recommendation not found"));
         if (recommendation.getId() == 1L) {
             dynamicRuleList.add(firstRule);
             dynamicRuleList.add(secondRule);
             dynamicRuleList.add(thourthRule);
+            Recommendation finalRecommendation = recommendation;
             dynamicRuleList.forEach(rule -> {
-                rule.setRecommendation(recommendation);
-                rule.setRecommendation(recommendation);
+                rule.setRecommendation(finalRecommendation);
+                rule.setRecommendation(finalRecommendation);
                 ruleRepository.save(rule);
             });
             return dynamicRuleList;
@@ -113,8 +117,9 @@ public class CombinerQueryService {
             dynamicRuleList.add(firstRule);
             dynamicRuleList.add(secondRule);
             dynamicRuleList.add(thirdRule);
+            Recommendation finalRecommendation1 = recommendation;
             dynamicRuleList.forEach(rule -> {
-                rule.setRecommendation(recommendation);
+                rule.setRecommendation(finalRecommendation1);
                 ruleRepository.save(rule);
             });
             return dynamicRuleList;
@@ -124,16 +129,16 @@ public class CombinerQueryService {
     }
 
     // Метод обновления Recommendation и связанных правил
-    public BankRecommendationRule getRecommendation(Long id) {
-        Recommendation recommendation = recommendationRepository.findById(id).orElseThrow(() -> new RecommendBankException("recommendation not found"));
-        List<Rule> currentList = getRules(id);
+    public BankRecommendationRule getRecommendation(Recommendation recommendation) {
+        recommendation = recommendationRepository.findById(recommendation.getId()).orElseThrow(() -> new RecommendBankException("recommendation not found"));
+        List<Rule> currentList = getRules(recommendation);
         List<RuleDto> newList = currentList.stream().map(this::getStringArgumentsOfRule).toList();
         log.info("this is recommendation has list of Rules: {}", currentList.stream().toList());
         return new BankRecommendationRule(UUID.randomUUID(),
                 recommendation.getProductName(), recommendation.getDescription(), newList);
     }
 
-    private RuleDto getStringArgumentsOfRule(Rule rule) {
+    public RuleDto getStringArgumentsOfRule(Rule rule) {
         String arguments = new String(rule.getArguments(), StandardCharsets.UTF_8);
         String[] splitArgs = arguments.split(",");
 
@@ -141,6 +146,10 @@ public class CombinerQueryService {
             splitArgs[i] = splitArgs[i].replaceAll("[{}\"]", "").trim();
         }
         return new RuleDto(rule.getQueryName(), splitArgs, rule.isNegate());
+    }
+
+    private void convertToStringArgs(String args) {
+        args.replaceAll("[{}\"]", "").trim();
     }
 }
 
